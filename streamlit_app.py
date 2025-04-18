@@ -13,22 +13,39 @@ system_prompt = """you are a search engine. you are going to recieve a specific 
 """ 
 
 user_prompt = ""
-topics = ["quadratic equations","linear equation","pythagorean theorem"]
-wikipedia = {}
-for i in topics:
-    user_prompt = "generate a page base on this topic: "+i
-    response = client.chat.completions.create(
-        model = "gpt-3.5-turbo-0125",
-        response_format= {
-            {"type":"json_object"}
-        },
-        messages = [
-            {"role":"system","content":system_prompt},
-            {"role":"user","content":user_prompt}
-        ]
-    ) 
+topics = ["Quadratic Equations","Linear Equation","Pythagorean Theorem"]
+
+if "wikipedia" not in st.session_state:
+    st.session_state["wikipedia"] = {}
+    for i in topics:
+        user_prompt = "generate a page base on this topic: "+i
+        response = client.chat.completions.create(
+            model = "gpt-3.5-turbo-0125",
+            response_format= {"type":"json_object"},
+            messages = [
+                {"role":"system","content":system_prompt},
+                {"role":"user","content":user_prompt}
+            ]
+        ) 
+        st.session_state["wikipedia"][i]= response.choices[0].message.content
+
 """
 Welcome to the Math Wiki!
 """
 
-st.selectbox("Which page would you like to read?")
+selected_topic = st.selectbox("Which page would you like to read?",topics)
+st.write(selected_topic)
+
+st.write(st.session_state["wikipedia"])
+
+"""
+CREATOR
+"""
+
+st.write(st.session_state["wikipedia"][selected_topic]["creator"])
+"""
+PURPOSE
+"""
+"""
+FORM
+"""
